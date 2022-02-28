@@ -7,9 +7,11 @@
 	<parameter name="jenkinsEnvironments" value="DEMO"/>
 	<parameter name="jenkinsEmail" value="demo@qaprosoft.com"/>
 
-	<parameter name="jenkinsRegressionPipeline" value="api_regression, full_regression"/>
-	<parameter name="jenkinsPipelineEnvironments" value="DEMO"/>
+	<parameter name="jenkinsRegressionPipeline" value="order_regression"/>
+
+	<parameter name="jenkinsPipelineEnvironments" value="DEMO"/>	
 	<parameter name="jenkinsJobExecutionMode" value="continue"/>
+	<parameter name="jenkinsJobExecutionOrder" value="1"/>
 
 	<!-- example declaring non default retry_count -->
 	<parameter name="jenkinsDefaultRetryCount" value="2"/>

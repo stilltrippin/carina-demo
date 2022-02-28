@@ -7,11 +7,11 @@
 	<parameter name="jenkinsEnvironments" value="DEMO"/>
 	<parameter name="jenkinsEmail" value="demo@qaprosoft.com"/>
   
-	<parameter name="jenkinsRegressionPipeline" value="web_regression, full_regression"/>
-	<parameter name="jenkinsPipelineEnvironments" value="DEMO"/>
+	<parameter name="jenkinsRegressionPipeline" value="order_regression"/>
 
-	<parameter name="jenkinsJobExecutionOrder" value="1"/>
+	<parameter name="jenkinsPipelineEnvironments" value="DEMO"/>	
 	<parameter name="jenkinsJobExecutionMode" value="continue"/>
+	<parameter name="jenkinsJobExecutionOrder" value="2"/>
 	<parameter name="jenkinsAutoScreenshot" value="true"/>
 
 	<test name="GSM arena proxy web test">
