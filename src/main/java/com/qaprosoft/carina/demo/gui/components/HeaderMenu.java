@@ -42,6 +42,12 @@ public class HeaderMenu extends AbstractUIObject {
     @FindBy(xpath = "//ul[@id='menu']/li")
     private List<ExtendedWebElement> menuItems;
 
+    @FindBy(xpath = "//div[@id='social-connect']/a[7]")
+    private ExtendedWebElement loginLink;
+
+    @FindBy(xpath = "//div[@id='social-connect']/a[8]/i[@class='head-icon icon-signout']")
+    private ExtendedWebElement logoutLink;
+
     public HeaderMenu(WebDriver driver, SearchContext searchContext) {
         super(driver, searchContext);
     }
@@ -64,5 +70,13 @@ public class HeaderMenu extends AbstractUIObject {
 
     public List<ExtendedWebElement> getMenuItems() {
         return menuItems;
+    }
+
+    public ExtendedWebElement getLoginLink() {
+        return loginLink;
+    }
+
+    public ExtendedWebElement getLogoutLink() {
+        return logoutLink;
     }
 }

@@ -22,13 +22,16 @@ import com.qaprosoft.carina.core.foundation.utils.tag.TestPriority;
 import com.qaprosoft.carina.core.foundation.webdriver.decorator.ExtendedWebElement;
 import com.qaprosoft.carina.demo.gui.components.FooterMenu;
 import com.qaprosoft.carina.demo.gui.components.HeaderMenu;
+import com.qaprosoft.carina.demo.gui.components.LoginWindow;
 import com.qaprosoft.carina.demo.gui.components.NewsItem;
 import com.qaprosoft.carina.demo.gui.components.compare.ModelSpecs;
 import com.qaprosoft.carina.demo.gui.components.compare.ModelSpecs.SpecType;
 import com.qaprosoft.carina.demo.gui.pages.*;
 import com.zebrunner.agent.core.annotation.TestLabel;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -86,52 +89,89 @@ public class CustomWebTest implements IAbstractTest {
         softAssert1.assertAll();
     }
 
-
     @Test()
     @MethodOwner(owner = "qpsdemo")
-    @TestPriority(Priority.P1)
-    @TestLabel(name = "feature", value = {"web", "acceptance"})
-    public void testCompareModels() {
+    public void testSuccessLogin() {
         // Open GSM Arena home page and verify page is opened
         HomePage homePage = new HomePage(getDriver());
         homePage.open();
         Assert.assertTrue(homePage.isPageOpened(), "Home page is not opened");
-        // Open model compare page
-        FooterMenu footerMenu = homePage.getFooterMenu();
-        Assert.assertTrue(footerMenu.isUIObjectPresent(2), "Footer menu wasn't found!");
-        CompareModelsPage comparePage = footerMenu.openComparePage();
-        // Compare 3 models
-        List<ModelSpecs> specs = comparePage.compareModels("Samsung Galaxy J3", "Samsung Galaxy J5", "Samsung Galaxy J7 Pro");
-        // Verify model announced dates
-        SoftAssert softAssert = new SoftAssert();
-        softAssert.assertEquals(specs.get(0).readSpec(SpecType.ANNOUNCED), "2016, March 31");
-        softAssert.assertEquals(specs.get(1).readSpec(SpecType.ANNOUNCED), "2015, June 19");
-        softAssert.assertEquals(specs.get(2).readSpec(SpecType.ANNOUNCED), "2017, June");
-        softAssert.assertAll();
-    }
-    /*
-    @Test()
-    @MethodOwner(owner = "qpsdemo")
-    @TestLabel(name = "feature", value = {"web", "acceptance"})
-    public void testNewsSearch() {
-        HomePage homePage = new HomePage(getDriver());
-        homePage.open();
-        Assert.assertTrue(homePage.isPageOpened(), "Home page is not opened!");
-        
-        NewsPage newsPage = homePage.getFooterMenu().openNewsPage();
-        Assert.assertTrue(newsPage.isPageOpened(), "News page is not opened!");
-        
-        final String searchQ = "iphone";
-        List<NewsItem> news = newsPage.searchNews(searchQ);
-        Assert.assertFalse(CollectionUtils.isEmpty(news), "News not found!");
-        SoftAssert softAssert = new SoftAssert();
-        for(NewsItem n : news) {
-            System.out.println(n.readTitle());
-            softAssert.assertTrue(StringUtils.containsIgnoreCase(n.readTitle(), searchQ),
-                    "Invalid search results for " + n.readTitle());
-        }
-        softAssert.assertAll();
+
+        String email = "s9rowa@mail.ru";
+        String password = "changeme";
+        HeaderMenu headerMenu = homePage.getHeaderMenu();
+        Assert.assertTrue(headerMenu.isUIObjectPresent(10), "Header menu wasn't found!");
+
+        ExtendedWebElement loginLink = headerMenu.getLoginLink();
+        loginLink.click();
+
+        LoginWindow loginWindow = homePage.getLoginWindow();
+        ExtendedWebElement emailInput = loginWindow.getEmailInput();
+        ExtendedWebElement passwordInput = loginWindow.getPasswordInput();
+        emailInput.type(email);
+        passwordInput.type(password);
+        ExtendedWebElement loginButton = loginWindow.getLoginButton();
+        loginButton.click();
+
+        headerMenu = homePage.getHeaderMenu();
+        Assert.assertTrue(headerMenu.getLogoutLink().isElementPresent(), "Login Failed");
     }
 
-     */
+    @Test()
+    @MethodOwner(owner = "qpsdemo")
+    public void testWrongEmail() {
+        // Open GSM Arena home page and verify page is opened
+        HomePage homePage = new HomePage(getDriver());
+        homePage.open();
+        Assert.assertTrue(homePage.isPageOpened(), "Home page is not opened");
+
+        String email = RandomStringUtils.randomAlphabetic(10) + "@" + RandomStringUtils.randomAlphabetic(5);
+        String password = "changeme";
+        HeaderMenu headerMenu = homePage.getHeaderMenu();
+        Assert.assertTrue(headerMenu.isUIObjectPresent(10), "Header menu wasn't found!");
+
+        ExtendedWebElement loginLink = headerMenu.getLoginLink();
+        loginLink.click();
+
+        LoginWindow loginWindow = homePage.getLoginWindow();
+        ExtendedWebElement emailInput = loginWindow.getEmailInput();
+        ExtendedWebElement passwordInput = loginWindow.getPasswordInput();
+        emailInput.type(email);
+        passwordInput.type(password);
+        ExtendedWebElement loginButton = loginWindow.getLoginButton();
+        loginButton.click();
+
+        String GSM_ARENA_LOGIN_FAILED_EMAIL = "Reason: User record not found.";
+        String result = getDriver().findElement(By.xpath("//div[@class='normal-text res-error']/p")).getText();
+        Assert.assertTrue(GSM_ARENA_LOGIN_FAILED_EMAIL.equals(result),"Username check failed");
+    }
+
+    @Test()
+    @MethodOwner(owner = "qpsdemo")
+    public void testWrongPassword() {
+        // Open GSM Arena home page and verify page is opened
+        HomePage homePage = new HomePage(getDriver());
+        homePage.open();
+        Assert.assertTrue(homePage.isPageOpened(), "Home page is not opened");
+
+        String email = "s9rowa@mail.ru";
+        String password = RandomStringUtils.randomAlphanumeric(10);
+        HeaderMenu headerMenu = homePage.getHeaderMenu();
+        Assert.assertTrue(headerMenu.isUIObjectPresent(10), "Header menu wasn't found!");
+
+        ExtendedWebElement loginLink = headerMenu.getLoginLink();
+        loginLink.click();
+
+        LoginWindow loginWindow = homePage.getLoginWindow();
+        ExtendedWebElement emailInput = loginWindow.getEmailInput();
+        ExtendedWebElement passwordInput = loginWindow.getPasswordInput();
+        emailInput.type(email);
+        passwordInput.type(password);
+        ExtendedWebElement loginButton = loginWindow.getLoginButton();
+        loginButton.click();
+
+        String GSM_ARENA_LOGIN_FAILED_PASSWORD = "Reason: Wrong password.";
+        String result = getDriver().findElement(By.xpath("//div[@class='normal-text res-error']/p")).getText();
+        Assert.assertTrue(GSM_ARENA_LOGIN_FAILED_PASSWORD.equals(result),"Password check failed");
+    }
 }
